@@ -453,38 +453,36 @@ void CSGDecode(void)
 
   i = code;
   while (i != NULL) {
-    printf("    instr %d: ", i->line);
-    // assign first instruction in first block
-    if(i->line == 1){
-      printf("Block_%s\n",cnt_block);
-      b->first = i;
-      
-    }
-    // assign last instruction in basic block with branch
-    
     if((i->op == ibr)||(i->op == iblbs)||(i->op == iblbc)){
         b->last = i;
         jump_true[j] = i->true->line;
         j++;
         cnt_block++;
-;    }
+    }
+    // assign first instruction in first block
+    if(i->line == 1){
+      printf("Block_%d\n",cnt_block);
+      b->first = i;
+    }
+    // assign last instruction in basic block with branch
     
     // assign first instruction in basic block that prv instruction is false
     if((i->prv->op == ibr)||(i->prv->op == iblbs)||(i->prv->op == iblbc)){
-      printf("Block_%s\n",cnt_block );
+      printf("Block_%d\n",cnt_block );
       b->first = i;
     }
     // assign first and last instruction in basic block that prv instruction is true
-    for(int a = 0;a < (sizeof(jump_true)) ;a++){
+    for(int a = 0;a < (sizeof(jump_true[100])/sizeof(jump_true[0])) ;a++){
       if(i->nxt->line == jump_true[a]){
         b->last = i;
         cnt_block++;
       }
       if(i->line == jump_true[a]){
-        printf("Block_%s\n",cnt_block );
+        printf("Block_%d\n",cnt_block );
         b->first = i;
       }
     }
+    printf("    instr %d: ", i->line);
     switch (i->op) {
       
       case iadd: printf("add"); PrintNode(i->x); PrintNode(i->y); break;
